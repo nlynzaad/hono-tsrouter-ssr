@@ -1,14 +1,25 @@
-import { createFileRoute } from '@tanstack/react-router';
+import { Await, createFileRoute } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/')({
-  component: HomePage,
-});
+  loader: () => ({
+    date: new Date(),
+    deferred: new Promise<{ date: Date }>((r) =>
+      setTimeout(() => r({ date: new Date() }), 1000),
+    ),
+  }),
+  component: IndexComponent,
+})
 
-function HomePage() {
+function IndexComponent() {
+  const data = Route.useLoaderData()
+
   return (
-    <div>
-      <h1>Home Page</h1>
-      <p>Welcome to the streaming SSR app with Tanstack Router, Hono, and Bun!</p>
+    <div className="p-2">
+      <h3>Welcome Home!</h3>
+      <p>Data: {data.date.toString()}</p>
+      <Await promise={data.deferred} fallback="Loading...">
+        {(data) => <p>Deferred: {data.date.toString()}</p>}
+      </Await>
     </div>
-  );
+  )
 }

@@ -1,6 +1,6 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
-import honoDevServer from '@hono/vite-dev-server';
+import devServer from '@hono/vite-dev-server';
 import { TanStackRouterVite } from '@tanstack/router-vite-plugin';
 import viteTsConfigPaths from 'vite-tsconfig-paths';
 import bunAdapter from "@hono/vite-dev-server/bun";
@@ -13,10 +13,10 @@ export default defineConfig({
     viteTsConfigPaths(),
     TanStackRouterVite({
       target: 'react',
-      autoCodeSplitting: true
+      autoCodeSplitting: false
     }),
-    honoDevServer({
-      entry: './src/entry-server.tsx',
+    devServer({
+      entry: './src/server/server.ts',
       adapter: bunAdapter,
     }),
     react(),

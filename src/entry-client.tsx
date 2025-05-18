@@ -1,7 +1,12 @@
-import ReactDOM from 'react-dom/client'
+import { hydrateRoot } from 'react-dom/client'
+
 import { StartClient } from '@tanstack/react-start'
-import { createRouter } from '~/router'
+import { createRouter } from './router'
+import {EventSourceProvider} from "react-sse-hooks";
 
 const router = createRouter()
 
-ReactDOM.hydrateRoot(document, <StartClient router={router} />)
+hydrateRoot(document,
+	<EventSourceProvider>
+		<StartClient router={router} />
+	</EventSourceProvider>)
