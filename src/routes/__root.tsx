@@ -7,21 +7,23 @@ export const Route = createRootRouteWithContext<RouterContext>()({
 	notFoundComponent: () => (<div>Not Found</div>),
 	head: () => ({
 		scripts: [
+			...!import.meta.env.PROD ? [
+				{
+					type: 'module',
+					children: `import RefreshRuntime from "/@react-refresh"
+          RefreshRuntime.injectIntoGlobalHook(window)
+          window.$RefreshReg$ = () => {}
+          window.$RefreshSig$ = () => (type) => type
+          window.__vite_plugin_react_preamble_installed__ = true`,
+				},
+				{
+					type: 'module',
+					src: '/@vite/client',
+				}
+			] : [],
 			{
 				type: 'module',
-				children: `import RefreshRuntime from "/@react-refresh"
-  RefreshRuntime.injectIntoGlobalHook(window)
-  window.$RefreshReg$ = () => {}
-  window.$RefreshSig$ = () => (type) => type
-  window.__vite_plugin_react_preamble_installed__ = true`,
-			},
-			{
-				type: 'module',
-				src: '/@vite/client',
-			},
-			{
-				type: 'module',
-				src: '/src/entry-client.tsx',
+				src: import.meta.env.PROD ? '/client.js' : '/src/entry-client.tsx',
 			},
 		],
 	})
@@ -56,7 +58,7 @@ export function RootComponent() {
 					</Link>
 				</div>
 				<hr/>
-					<Outlet/>
+				<Outlet/>
 				<TanStackRouterDevtools position="bottom-right"/>
 				<Scripts/>
 			</body>

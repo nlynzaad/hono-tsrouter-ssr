@@ -6,10 +6,8 @@ export function createRouter() {
 	return createReactRouter({
 		routeTree,
 		context: {
-			head: '',
+			head: ''
 		},
-		defaultPreload: 'intent',
-		scrollRestoration: true,
 	})
 }
 

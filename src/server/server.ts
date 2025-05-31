@@ -1,15 +1,30 @@
-import {serve} from 'bun';
 import {render} from '~/entry-server';
 import {Hono} from "hono";
-import {serveStatic} from "hono/bun";
-import {streamSSE} from "hono/streaming";
 
-const PORT = process.env.PORT || 3030;
+import {stream, streamSSE} from "hono/streaming";
+import {serveStatic} from "hono/bun";
+import * as process from "node:process";
+import * as path from "node:path";
+import {fileURLToPath} from "url";
+import {dirname} from "path";
+import type {StatusCode} from "hono/utils/http-status";
 
 const app = new Hono();
 
-// Serve static assets
-app.use('/assets/*', serveStatic({root: './dist/client'}));
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+if (process.env.NODE_ENV === 'production') {
+	app.use('*', serveStatic({
+		root: path.resolve(__dirname, '../client'),
+		// @ts-ignore
+		allowAbsoluteRoot: true
+	}))
+}
+
+app.get('/test', async (c) => {
+	return c.json({test: 'test'})
+})
 
 app.get('/api/servertime', async (c) => {
 	let id = 0
@@ -35,18 +50,22 @@ app.get('/api/servertime', async (c) => {
 	})
 })
 
-// Handle all other routes with SSR
 app.get('*', async (c) => {
-	return await render(c.req.raw)
-});
+	const res = await render(c.req.raw);
+	c.status(res.status as StatusCode)
 
-if (process.env.NODE_ENV === 'production') {
-	console.log(`Server running at http://localhost:${PORT}`);
-
-	serve({
-		fetch: app.fetch,
-		port: Number(PORT),
+	res.headers.forEach((value, name) => {
+		//the content-type of text/html during dev with vite dev server seems to break the streaming ssr and hydration.
+		if (process.env.NODE_ENV !== 'production' && name.toLowerCase() === 'content-type' && value.startsWith('text/html')) {
+			c.header(name, 'charset=utf-8')
+		} else {
+			c.header(name, value)
+		}
 	})
-}
+
+	return stream(c, async (stream) => {
+		await stream.pipe(res.body!)
+	})
+})
 
 export default app;
