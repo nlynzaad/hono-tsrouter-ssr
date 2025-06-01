@@ -8,4 +8,8 @@ This project demonstrates a streaming Server-Side Rendered (SSR) application usi
 
 ## Getting Started
 
-1. Install dependencies:
+1. Install dependencies: bun install
+2. To run in dev mode: bun run dev
+3. To build the project: bun run build
+4. To serve the built project: bun run serve
+   
