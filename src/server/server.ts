@@ -3,7 +3,6 @@ import {Hono} from "hono";
 
 import {stream, streamSSE} from "hono/streaming";
 import {serveStatic} from "hono/bun";
-import * as process from "node:process";
 import * as path from "node:path";
 import {fileURLToPath} from "url";
 import {dirname} from "path";
@@ -14,7 +13,7 @@ const app = new Hono();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-if (process.env.NODE_ENV === 'production') {
+if (import.meta.env.PROD) {
 	app.use('*', serveStatic({
 		root: path.resolve(__dirname, '../client'),
 		// @ts-ignore
@@ -56,7 +55,7 @@ app.get('*', async (c) => {
 
 	res.headers.forEach((value, name) => {
 		//the content-type of text/html during dev with vite dev server seems to break the streaming ssr and hydration.
-		if (process.env.NODE_ENV !== 'production' && name.toLowerCase() === 'content-type' && value.startsWith('text/html')) {
+		if (!import.meta.env.PROD && name.toLowerCase() === 'content-type' && value.startsWith('text/html')) {
 			c.header(name, 'charset=utf-8')
 		} else {
 			c.header(name, value)
