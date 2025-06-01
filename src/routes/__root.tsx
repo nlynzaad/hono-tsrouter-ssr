@@ -29,7 +29,7 @@ export const Route = createRootRouteWithContext<RouterContext>()({
 	})
 });
 
-export function RootComponent() {
+function RootComponent() {
 	// noinspection HtmlRequiredTitleElement
 	return (
 		<html lang="en">

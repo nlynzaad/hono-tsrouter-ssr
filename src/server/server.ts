@@ -16,8 +16,6 @@ const __dirname = dirname(__filename);
 if (import.meta.env.PROD) {
 	app.use('*', serveStatic({
 		root: path.resolve(__dirname, '../client'),
-		// @ts-ignore
-		allowAbsoluteRoot: true
 	}))
 }
 
