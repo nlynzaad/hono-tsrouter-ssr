@@ -43,6 +43,7 @@ const clientBuildConfig: UserConfig = {
 		...baseBuildConfig,
 		outDir: 'dist/client',
 		emitAssets: true,
+		manifest: true,
 		rollupOptions: {
 			...baseBuildConfig?.rollupOptions,
 			input: {
