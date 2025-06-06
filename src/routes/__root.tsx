@@ -6,6 +6,9 @@ export const Route = createRootRouteWithContext<RouterContext>()({
 	component: RootComponent,
 	notFoundComponent: () => (<div>Not Found</div>),
 	head: () => ({
+		links: [
+			{rel: 'icon', href: '/images/favicon.ico'}
+		],
 		scripts: [
 			...!import.meta.env.PROD ? [
 				{
@@ -23,7 +26,7 @@ export const Route = createRootRouteWithContext<RouterContext>()({
 			] : [],
 			{
 				type: 'module',
-				src: import.meta.env.PROD ? '/client.js' : '/src/entry-client.tsx',
+				src: import.meta.env.PROD ? '/static/client.js' : '/src/entry-client.tsx',
 			},
 		],
 	})

@@ -1,29 +1,28 @@
-import {render} from '~/entry-server';
 import {Hono} from "hono";
-
-import {stream, streamSSE} from "hono/streaming";
 import {serveStatic} from "hono/bun";
-import * as path from "node:path";
-import {fileURLToPath} from "url";
-import {dirname} from "path";
+import {stream, streamSSE} from "hono/streaming";
+import {statSync, readdirSync} from 'node:fs'
+import {join} from 'node:path';
+import {render} from '~/entry-server';
 import type {StatusCode} from "hono/utils/http-status";
 
 const app = new Hono();
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
 if (import.meta.env.PROD) {
-	app.use('*', serveStatic({
-		root: path.resolve(__dirname, '../client'),
-	}))
+	const clientPath = Bun.fileURLToPath(import.meta.resolve(import.meta.dir + '/../client'));
+
+	const files = readdirSync(clientPath);
+
+	files.map(file => {
+		if (statSync(join(clientPath, file)).isDirectory()) {
+			app.use(`/${file}/*`, serveStatic({
+				root: clientPath,
+			}))
+		}
+	})
 }
 
-app.get('/test', async (c) => {
-	return c.json({test: 'test'})
-})
-
-app.get('/api/servertime', async (c) => {
+app.get('/api/serverTime', async (c) => {
 	let id = 0
 	return streamSSE(c, async (stream) => {
 		let isOpen = true;
