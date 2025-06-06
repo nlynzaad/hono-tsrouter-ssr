@@ -9,7 +9,7 @@ function ServerTimePage() {
 	const [serverTime, setServerTime] = useState<string | undefined>(undefined);
 
 	useEffect(() => {
-		const es = new EventSource('/api/servertime');
+		const es = new EventSource('/api/serverTime');
 
 		es.addEventListener('time-update', (event) => {
 			setServerTime(event.data)
