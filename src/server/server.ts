@@ -2,14 +2,14 @@ import {Hono} from "hono";
 import {serveStatic} from "hono/bun";
 import {stream, streamSSE} from "hono/streaming";
 import {statSync, readdirSync} from 'node:fs'
-import {join} from 'node:path';
+import {join, resolve} from 'node:path';
 import {render} from '~/entry-server';
 import type {StatusCode} from "hono/utils/http-status";
 
 const app = new Hono();
 
 if (import.meta.env.PROD) {
-	const clientPath = Bun.fileURLToPath(import.meta.resolve(`${import.meta.dir}/../client`));
+	const clientPath = resolve(`${import.meta.dir}/../client`);
 
 	const files = readdirSync(clientPath);
 

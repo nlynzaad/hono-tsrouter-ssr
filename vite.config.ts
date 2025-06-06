@@ -4,11 +4,9 @@ import devServer from '@hono/vite-dev-server';
 import TanStackRouterVite from '@tanstack/router-plugin/vite';
 import viteTsConfigPaths from 'vite-tsconfig-paths';
 import bunAdapter from "@hono/vite-dev-server/bun";
-import {dirname, resolve}from "path"
-import {fileURLToPath}from "url"
+import {resolve}from "path"
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+const __dirname = import.meta.dir;
 
 const ssrBuildConfig: UserConfig = {
 	build: {
@@ -43,6 +41,7 @@ const clientBuildConfig: UserConfig = {
 		copyPublicDir: true,
 		emptyOutDir: true,
 		rollupOptions: {
+			external: ['node:fs', 'node:path'],
 			input: {
 				client: resolve(__dirname, '/src/entry-client.tsx')
 			},
