@@ -69,7 +69,7 @@ export default defineConfig((configEnv: ConfigEnv): UserConfig => {
 			TanStackRouterVite({
 				target: 'react',
 				//currently code splitting results in an error. this is not a problem in prod.
-				autoCodeSplitting: false,
+				autoCodeSplitting: isBuild,
 			}),
 			devServer({
 				entry: resolve(__dirname, '/src/server/server.ts'),
