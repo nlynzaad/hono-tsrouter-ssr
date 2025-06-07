@@ -49,14 +49,10 @@ app.get('/api/serverTime', async (c) => {
 app.get('*', async (c) => {
 	const res = await render(c.req.raw);
 	c.status(res.status as StatusCode)
+	c.header('Transfer-Encoding', 'chunked')
 
 	res.headers.forEach((value, name) => {
-		//the content-type of text/html during dev with vite dev server seems to break the streaming ssr and hydration.
-		if (!import.meta.env.PROD && name.toLowerCase() === 'content-type' && value.startsWith('text/html')) {
-			c.header(name, 'charset=utf-8')
-		} else {
 			c.header(name, value)
-		}
 	})
 
 	return stream(c, async (stream) => {
